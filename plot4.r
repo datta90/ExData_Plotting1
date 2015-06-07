@@ -1,0 +1,32 @@
+par(mar=c(4,4,2,2))
+ par(mfrow=c(2,2))
+a2=read.table('1.txt',header=T,sep=';',skip=66630,nrows=3000)
+a1=rbind(a2[a2[1]=='1/2/2007' , ],a2[a2[1]=='2/2/2007' , ])
+
+#first plot
+plot(a1[,3],type='l',xaxt='n',ylab='global active power(kilowats)')
+axis(1,at=c(1,1500,2500),labels=c('Thu','Fri','Sat'))
+
+#2nd plot
+plot(a1[,5],type='l',xaxt='n',ylab='voltage',xlab='datetime')
+axis(1,at=c(1,1500,2500),labels=c('Thu','Fri','Sat'))
+#3rd plot
+z=c(a1[,7],a1[,8],a1[,9])
+z1=rep(c(1,2,3),each=2880)
+
+ene=as.data.frame(cbind(z,z1))
+
+with(ene,plot(z,main='energy sub',type='n',xaxt='n',xlim=c(0,3000),ylab='energy meter'))
+axis(1,at=c(1,1500,3000),labels=c('Thu','Fri','Sat'))
+with(subset(ene,z1==1),points(z,type='l',col='blue'))
+with(subset(ene,z1==2),points(z,type='l',col='red'))
+with(subset(ene,z1==3),points(z,type='l',col='black'))
+legend('topright',legend=c('sub_meter1','sub_meter2','sub_meter3'),
+       col=c('blue','red','black'),lty=1)
+
+#4th plot
+plot(a1[,3],type='h',xaxt='n',ylim=c(0,0.5),ylab='global reactive power',xlab='datetime')
+axis(1,at=c(1,1500,2500),labels=c('Thu','Fri','Sat'))
+dev.copy(png,file='plot4.png',width=480,height=480)
+dev.off()
+
